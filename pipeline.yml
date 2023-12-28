@@ -1,1 +1,10 @@
 name: PIPELINE
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "building..."
+          echo "testing..."
+          echo "deploying..."
