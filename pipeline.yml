@@ -1,45 +1,23 @@
 workflow:
-rules
-+ if: $CI_COMMIT_BRANCH
-
+  rules:
+    - if: $CI_COMMIT_BRANCH
 install_dependencies:
-stage: build
-
-script
-
-= echo "This is the installation step"
-
+  stage: build
+  script:
+    - echo "This is the installation step"
 before_script:
--I
+  - >-
+    CONTAINER NAME="affectionate_saha" if docker ps -a --format "{{.Names}}" |
+    grep -q "^$CONTAINER NAMES"; then echo "Stopping existing container..."
+    docker stop $CONTAINER NAME docker rm $CONTAINER_NAME
 
-# Check if docker is running then terminate to free port
-
-CONTAINER NAME="affectionate_saha"
-
-if docker ps -a --format "{{.Names}}" | grep -q "*$CONTAINER NAMES
-echo "Stopping existing container..."
-docker stop $CONTAINER NAME
-docker rm $CONTAINER_NAME
-
-fi
-
+    fi
 test:
-stage: test
-script:
-
-then
-
-J edit |» Delete || | |b)
-
-= docker run -d --name $CONTAINER NAME -v $(pwd)/public/:/usr/local/apache2/htdocs/ -p 9080:80 httpd: latest
-
-artifact:
-
-paths:
-
-~ public/
-rules:
-
-“main”
-
-$SCE_COMMIT_BRANCH
+  stage: test
+  script:
+    - 'docker run -d --name $CONTAINER NAME -v $(pwd)/public/:/usr/local/apache2/htdocs/ -p 9080:80 httpd': latest
+  artifact: null
+  paths:
+    - public/
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
